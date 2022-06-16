@@ -256,7 +256,7 @@ module ApiCall
 
   def encode_file(tmp_route)
     File.open(tmp_route, 'rb') do |file|
-      Base64.encode64(file.read)
+      Base64.strict_encode64(file.read)
     end
   end
 end
