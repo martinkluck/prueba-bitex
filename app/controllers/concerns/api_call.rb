@@ -28,7 +28,13 @@ module ApiCall
 
     response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).post(uri, json: data)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
+  rescue StandardError => e
+    raise StandardError, e
   end
 
   def get_userid_by_email(email)
@@ -44,7 +50,9 @@ module ApiCall
       return account['id'] if account['attributes']['account_name'].include? email
     end
 
-    nil
+    raise StandardError, 'Email not found'
+  rescue StandardError => e
+    raise StandardError, e
   end
 
   def create_issue(account_id)
@@ -69,7 +77,13 @@ module ApiCall
 
     response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).post(uri, json: data)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
+  rescue StandardError => e
+    raise StandardError, e
   end
 
   def create_natural_docker_seed(issue_id, first_name, last_name, birth_date, nationality)
@@ -99,7 +113,13 @@ module ApiCall
 
     response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).post(uri, json: data)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
+  rescue StandardError => e
+    raise StandardError, e
   end
 
   def create_domicile_seeds(issue_id, country, state, city, street_address, street_number, postal_code)
@@ -130,11 +150,15 @@ module ApiCall
       }
     }
 
-    response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).post(uri, json: data)
+    response = HTTP.headers(headers).timeout(15).post(uri, json: data)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
   rescue StandardError => e
-    e
+    raise StandardError, e
   end
 
   def identification_seed(issue_id, document, nationality)
@@ -163,10 +187,13 @@ module ApiCall
 
     response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).post(uri, json: data)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
   rescue StandardError => e
-    puts e.message
-    e
+    raise StandardError, e
   end
 
   def create_email_seeds(issue_id, email)
@@ -194,10 +221,13 @@ module ApiCall
 
     response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).post(uri, json: data)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
   rescue StandardError => e
-    puts e.message
-    e
+    raise StandardError, e
   end
 
   def create_attachments(id, type, file)
@@ -205,14 +235,11 @@ module ApiCall
     headers = { 'Content-Type' => 'application/json', 'X-Exchange-Api-Key' => API_KEY,
                 'X-Exchange-Nonce' => NONCE, 'X-Exchange-Signature' => SIGNATURE,
                 'X-Exchange-User-Id' => USER_ID, 'X-Exchange' => 'true' }
-
-    puts "#{File.basename(file)} #{File.size(file)} #{file.content_type} #{file} #{file.path}"
-    puts encode_file(file.path)
     data = {
       "data": {
         "type": 'attachments',
         "attributes": {
-          "document": encode_file(file.path),
+          "document": "data:#{file.content_type};base64" + encode_file(file.path),
           "document_file_name": File.basename(file),
           "document_content_type": file.content_type
         },
@@ -228,14 +255,14 @@ module ApiCall
     }
 
     response = HTTP.headers(headers).post(uri, json: data)
+
     if response.status.success?
       JSON.parse(response.body)['data']
     else
-      puts response.body
+      raise StandardError, response
     end
   rescue StandardError => e
-    puts e.message
-    e
+    raise StandardError, e
   end
 
   def issue_complete(id)
@@ -246,10 +273,13 @@ module ApiCall
 
     response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).patch(uri)
 
-    JSON.parse(response.body)['data'] if response.status.success?
+    if response.status.success?
+      JSON.parse(response.body)['data']
+    else
+      raise StandardError, response
+    end
   rescue StandardError => e
-    puts e.message
-    e
+    raise StandardError, e
   end
 
   private
