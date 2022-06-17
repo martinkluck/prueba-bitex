@@ -13,62 +13,44 @@ class HomeController < ApplicationController
   def create
     @email = create_params[:email]
     session[:email] = @email
-
     if session[:account].present?
       @account = JSON.parse(session[:account])
     else
       @account = get_userid_by_email(@email)
-
       @account = set_account(@email)['id'] if @account.nil?
       session[:account] = @account.to_json
     end
-
-    puts 'Account created'
-
-    render :base_information
+    redirect_to base_information_path
   rescue StandardError => e
-    @error = e.message
-    render :index
+    redirect_to root_path, error: e.message
   end
+
+  def base_information; end
 
   def create_base_information
     @email_seed = create_email_seeds(@@issue['id'], session[:email])
-
-    puts 'Email seeds created'
-
     @natural_docket_seed = create_natural_docker_seed(@@issue['id'], create_params[:first_name], create_params[:last_name],
                                                       create_params[:birth_date], create_params[:nationality])
-
-    puts @natural_docket_seed.to_json
-    puts 'Natural Docket Seed created'
-
-    render :domicile
+    redirect_to domicile_path
   rescue StandardError => e
-    @error = e.message
-    render :base_information
+    redirect_to base_information_path, error: e.message
   end
+
+  def domicile; end
 
   def create_domicile
     @@issue = JSON.parse(session[:issue]) if session[:issue].present?
     @domicile_seed = create_domicile_seeds(@@issue['id'], create_params[:country], create_params[:state], create_params[:city],
                                            create_params[:street_address], create_params[:street_number], create_params[:postal_code])
-
-    puts @domicile_seed.to_json
-
-    puts 'Domicile Seed created'
-
     @address_img = create_attachments(@domicile_seed['id'], 'domicile_seeds', create_params[:address_img])
+    raise StandardError, 'Address image error' if @address_img.nil?
 
-    return render :domicile if @address_img.nil?
-
-    puts @address_img.to_json
-    puts 'Address img created'
-
-    render :document
+    redirect_to document_path
   rescue StandardError => e
-    @error = e.message
-    render :domicile
+    redirect_to domicile_path, error: e.message
   end
+
+  def document; end
 
   def create_document
     @@issue = JSON.parse(session[:issue]) if session[:issue].present?
@@ -84,11 +66,12 @@ class HomeController < ApplicationController
     puts @document_img.to_json
     raise StandardError, @document_img if @document_img.nil?
 
-    render :result
+    redirect_to result_path
   rescue StandardError => e
-    @error = e.message
-    render :document
+    redirect_to document_path, error: e.message
   end
+
+  def result; end
 
   def complete_issue
     @issue_complete = issue_complete(@@issue['id'])
@@ -98,10 +81,9 @@ class HomeController < ApplicationController
 
     reset_session unless @issue_complete.present?
 
-    render :result
+    redirect_to result_path
   rescue StandardError => e
-    @error = e.message
-    render :result
+    redirect_to result_path, error: e.message
   end
 
   private
@@ -121,12 +103,8 @@ class HomeController < ApplicationController
       @@issue = create_issue(@account)
       session[:issue] = @@issue.to_json
     end
-
-    puts @@issue.to_json
-    puts 'Issue created'
   rescue StandardError => e
-    @error = e.message
     reset_session
-    render :index
+    redirect_to root_path, error: e.message
   end
 end

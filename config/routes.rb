@@ -6,8 +6,12 @@ Rails.application.routes.draw do
   root 'home#index'
 
   post '/' => 'home#create'
+  get '/base_information' => 'home#base_information'
   post '/create_base_information' => 'home#create_base_information'
+  get '/domicile' => 'home#domicile'
   post '/create_domicile' => 'home#create_domicile'
+  get '/document' => 'home#document'
   post '/create_document' => 'home#create_document'
-  get '/complete_issue' => 'home#complete_issue'
+  get '/result' => 'home#result'
+  post '/complete_issue' => 'home#complete_issue'
 end

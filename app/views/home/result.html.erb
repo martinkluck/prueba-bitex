@@ -1,7 +1,8 @@
-
-  <div><%= @document %></div>
-  <div><%= @document_img %></div>
-
-<%= button_to "Completar", complete_issue_path, method: :get %>
-
-  <div><%= @issue_complete %></div>
+<div class="bg-gray-600">
+<%= button_to "Completar", complete_issue_path, method: :get, class: 'bg-gray-900 py-4 px-2 rounded' %>
+</div>
+<% flash.each do |type, msg| %>
+  <div class="text-red-500 text-sm font-medium">
+    <%= msg %>
+  </div>
+<% end %>
