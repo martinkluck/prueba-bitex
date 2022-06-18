@@ -34,6 +34,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -42,9 +43,10 @@ module ApiCall
     headers = { 'Content-Type' => 'application/json', 'X-Exchange-Api-Key' => API_KEY,
                 'X-Exchange-Nonce' => NONCE, 'X-Exchange-Signature' => SIGNATURE,
                 'X-Exchange-User-Id' => USER_ID, 'X-Exchange' => 'true' }
-    response = HTTP.headers(headers).timeout(connect: 5, write: 2, read: 10).get(uri)
-
+    response = HTTP.headers(headers).get(uri)
     data = JSON.parse(response.body)
+
+    raise StandardError, data if data['data'].nil?
 
     data['data'].each do |account|
       return account['id'] if account['attributes']['account_name'].include? email
@@ -52,6 +54,7 @@ module ApiCall
 
     raise StandardError, 'Email not found'
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -83,6 +86,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -119,6 +123,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -158,6 +163,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -193,6 +199,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -227,6 +234,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -262,6 +270,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 
@@ -279,6 +288,7 @@ module ApiCall
       raise StandardError, response
     end
   rescue StandardError => e
+    puts e.message
     raise StandardError, e
   end
 

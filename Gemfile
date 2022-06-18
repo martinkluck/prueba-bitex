@@ -77,6 +77,8 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'webmock'
+  gem 'vcr'
 end
 
 gem 'tailwindcss-rails', '~> 2.0'
