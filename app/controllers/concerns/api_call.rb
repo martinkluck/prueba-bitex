@@ -4,11 +4,11 @@ require 'json'
 module ApiCall
   extend ActiveSupport::Concern
 
-  BASE_URL = 'https://bitex-staging.la'
-  API_KEY = '991ace895d440d58b70c3bda981d96d9'
-  API_SECRET = '1f8a4b2a3feceaba0763f38f5422df66'
-  NONCE = '1'
-  USER_ID = '1711'
+  BASE_URL = ENV['base_url']
+  API_KEY = ENV['api_key']
+  API_SECRET = ENV['api_secret']
+  NONCE = ENV['nonce']
+  USER_ID = ENV['user_id']
   SIGNATURE = OpenSSL::HMAC.hexdigest('sha256', API_SECRET, "#{NONCE}#{USER_ID}#{API_KEY}")
 
   def set_account(email)
