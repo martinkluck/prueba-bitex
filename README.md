@@ -8,4 +8,6 @@ Things you may want to cover:
 
 * bundle install
 
+* cp config/application.example.yml config/application.yml
+
 * rails s
